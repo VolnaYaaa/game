@@ -1,29 +1,65 @@
 const emojis = [
-  "👄",
-  "🧚‍♀️",
-  "💩",
-  "🐢",
-  "🤡",
-  "👁️",
-  "🐤",
-  "🙊",
-  "🌽",
-  "🌵",
-  "🌻",
-  "🐝",
-  "👄",
-  "🧚‍♀️",
-  "💩",
-  "🐢",
-  "🤡",
-  "👁️",
-  "🐤",
-  "🙊",
-  "🌽",
-  "🌵",
-  "🌻",
-  "🐝",
+  "●●", 
+  "●●",
+  "●",  
+  "●",
+  "◎●",
+  "◎●",
+  "••", 
+  "••",
+  "•", 
+  "•",
+  "■", 
+  "■",
+  "◼︎",
+  "◼︎",
+  "▪︎", 
+  "▪︎",
 ];
+let firstChoice = null;
+let secondChoice = null;
+let cardsLeftToMatch = emojis.length / 2;
+
+const info = document.querySelector('#info');
+let infoScore = document.createElement('div');
+infoScore.className = "infoScore";
+
+
+const scoreKeep = document.createElement('div');
+scoreKeep.className = "scoreKeep";
+
+const keepTitre = document.createElement('h2');
+keepTitre.innerText = "Encore";
+const countKeep = document.createElement('span');
+let pairsFound = 0;
+countKeep.innerText = pairsFound;
+
+scoreKeep.appendChild(keepTitre);
+scoreKeep.appendChild(countKeep);
+infoScore.appendChild(scoreKeep);
+
+const scoreLose = document.createElement('div');
+scoreLose.className = "scoreLose";
+
+const loseTitre = document.createElement('h2');
+loseTitre.innerText = "ooooppsi";
+const countLose = document.createElement('span');
+let pairsLose = 0;
+countLose.innerText = pairsLose;
+
+scoreLose.appendChild(loseTitre);
+scoreLose.appendChild(countLose);
+
+
+
+infoScore.appendChild(scoreLose);
+
+
+info.appendChild(infoScore);
+
+
+
+
 
 const board = document.querySelector("#board");
 
@@ -39,16 +75,63 @@ function shuffleArray(array) {
   return array;
 }
 
+
 shuffleArray(emojis).forEach ((emoji) => { 
-    const card = document.createElement("div"); 
-    card.classList.add("card");
+    const cardElement = document.createElement("div"); 
+    cardElement.classList.add("card", "hidden");
+    cardElement.dataset.emoji = emoji;
+    console.log(emoji);
 
-    card.addEventListener("click", () => {
-       card.dataset.emoji = emoji;
+
+    window.addEventListener("load", () => {
+        cardElement.classList.remove('hidden');
+        setTimeout(() => {
+          cardElement.classList.add('hidden');
+        }, 4000);
     });
+    
+    cardElement.addEventListener("click", () => {
+    // on ignore les cartes déjà ouvertes (choisie ou déjà trouvée)
+    if (!cardElement.classList.contains('hidden')) {
+      return;
+    }
+    if(firstChoice === null) {
+      cardElement.classList.remove('hidden');
+      firstChoice = cardElement;
+    } else if (secondChoice === null) {
+      cardElement.classList.remove('hidden');
+      secondChoice = cardElement;
+    
+    if (firstChoice.dataset.emoji === secondChoice.dataset.emoji) {
+      firstChoice = null;
+      secondChoice = null;
+      cardsLeftToMatch = cardsLeftToMatch -1;
+      pairsFound = pairsFound + 1;
+      scoreLose.innerText = pairsFound;
+      if ( cardsLeftToMatch === 0) { setTimeout (() => {
+        window.alert("Vous avez gagné !");
+      }, 1000);
+      }
+        }
+    else {
+      setTimeout (() => {
+        firstChoice.classList.add('hidden');
+        secondChoice.classList.add('hidden');
+        firstChoice = null;
+        secondChoice = null;
+      }, 1000); 
+    }
 
-    board.appendChild(card);
+    } else { 
+      //on laisse vide
+      console.log("on laisse vide");
+    }
+    
+  });
+    board.appendChild(cardElement);
 });
+
+
 
 
 /**
